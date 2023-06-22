@@ -1,15 +1,18 @@
 USE team2_database;
 
+# Test User - Adult Female
 SET @age := 35,
 	@sex := 'F',
 	@pregnancy_indicator := 'Y',
 	@income := 2000;
     
+# Test User - Child Male
 SET @age := 17,
 	@sex := 'M',
 	@pregnancy_indicator := 'N',
 	@income := 1000;
     
+# Joins two tables together and matches user with 3 most popular plans that fit his or her demographics. 
 SELECT r.Plan_ID, r.Plan_Description, COUNT(i.Plan_ID) AS frequency 
 FROM rt_medicaid_plan r
 LEFT JOIN individual i ON r.Plan_ID = i.Plan_ID
