@@ -1,8 +1,6 @@
 ### Master SQL File ###
 
-### Delete ###
-USE bhall52_database;
-### Delete ###
+USE team2_database;
 
 ################## Drop Tables ##################
 set foreign_key_checks = 0; #If you cannot drop the table
