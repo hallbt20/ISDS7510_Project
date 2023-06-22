@@ -87,8 +87,19 @@ CREATE TABLE medicaid_summary (
 );
 
 #### Create Correspondence Table ####
-
-### Placeholder ###
+CREATE TABLE correspondence (
+	Document_Num INT (10),
+	Individual_ID INT (11),
+	Plan_ID VARCHAR(100),
+	First_Name VARCHAR (255),
+	Last_Name VARCHAR (255),
+	Generate_Date DATETIME,
+	Document_Type VARCHAR (10),
+	Correspondence_Status VARCHAR(1),
+	PRIMARY KEY (Document_Num),
+	CONSTRAINT fk_correspondence_individual_ID FOREIGN KEY (Individual_ID) REFERENCES individual(Individual_ID),
+	CONSTRAINT fk_correspondence_plan_ID FOREIGN KEY (Plan_ID) REFERENCES medicaid_summary (Plan_ID)
+);
 
 ################## Add Values to Tables ##################
 
