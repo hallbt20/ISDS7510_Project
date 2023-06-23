@@ -434,26 +434,10 @@ INSERT INTO correspondence_trigger VALUES
 	(1013,	'1:15',	'1:30'	,2141),
 	(1014,	'1:30',	'1:45'	,2147),
 	(1015,	'1:45',	'2:00'	,2153);
+    
+################## Add Trigger ##################    
 
-################## Queries ##################
-
-#1 The print shop is to issue out correspondence letters. Since the information is sensitive, a view needs to be created
-#that only shows the individuals first and last name and their addresses. 
-#The print shop needs to get the first initial and the last name of the individuals.
-
-DROP VIEW IF EXISTS PSS;
-CREATE VIEW PSS AS
-SELECT  i.First_Name, i.last_name, Addr_1, addr_2, Addr_State, Addr_City, Addr_Zip
-FROM correspondence c
-INNER JOIN individual i
-ON c.Individual_ID = i.individual_id
-INNER JOIN  account a
-ON i.Account_Num = a.Account_Num
-WHERE Correspondence_Status = 'N';
-
-SELECT SUBSTR(First_Name, 1, 1) As NewColumn, last_name FROM team2_database.PSS;
-
-# 2) Anytime that there is an update to contact information, account notes need to be 
+# Anytime that there is an update to contact information, account notes need to be 
 # inserted into the account table and changes need to be logged separately. 
 
 DROP TRIGGER IF EXISTS update_individual;
@@ -542,6 +526,53 @@ SET Addr_1 = '123 Main Street',
     Addr_Zip = '70123'
 WHERE Account_Num = 938000328;
 
+################## Queries ##################
+
+#1 The print shop is to issue out correspondence letters. Since the information is sensitive, a view needs to be created
+#that only shows the individuals first and last name and their addresses. 
+#The print shop needs to get the first initial and the last name of the individuals.
+
+DROP VIEW IF EXISTS PSS;
+CREATE VIEW PSS AS
+SELECT  i.First_Name, i.last_name, Addr_1, addr_2, Addr_State, Addr_City, Addr_Zip
+FROM correspondence c
+INNER JOIN individual i
+ON c.Individual_ID = i.individual_id
+INNER JOIN  account a
+ON i.Account_Num = a.Account_Num
+WHERE Correspondence_Status = 'N';
+
+SELECT SUBSTR(First_Name, 1, 1) As NewColumn, last_name FROM team2_database.PSS;
+
+#2 Medicaid is interesting in exploring the demographics of Medicaid applicants. They want to explore 
+#statistics regarding average age, age distribution, frequency of pregnant individuals. 
+
+SELECT Pregnancy_Indicator, COUNT(Pregnancy_Indicator) AS FREQUENCY FROM individual WHERE Sex = 'F' GROUP BY Pregnancy_Indicator; 
+
+SELECT AVG(DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0) AS avg_age FROM individual;
+
+SELECT
+    CASE
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 19 THEN 'Under 19'
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 19 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 26 THEN 'Between 19 and 25'
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 26 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 36 THEN 'Between 26 and 35'
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 36 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 51 THEN 'Between 36 and 50'
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 51 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 66 THEN 'Between 51 and 65'
+        ELSE '65 and older'
+    END AS age_group,
+    COUNT(*) AS frequency
+FROM
+    individual
+GROUP BY
+    CASE
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 19 THEN 'Under 19'
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 19 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 26 THEN 'Between 19 and 25'
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 26 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 36 THEN 'Between 26 and 35'
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 36 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 51 THEN 'Between 36 and 50'
+        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 51 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 66 THEN 'Between 51 and 65'
+        ELSE '65 and older'
+    END;
+
 #3 How many cases need to be updated for this month? Accounts that have been active for a year in approved and ongoing modes need to be renewed.
 #A distinct count of the individuals IDs are needed.
 
@@ -587,7 +618,7 @@ where i.Citizenship_Status = 'N';
 select distinct Interface_Monitor from eligibility_determination where End_Time like '%9:30%'; #Before 9:30
 select distinct Interface_Monitor from eligibility_determination where Start_Time like '%9:30%';#After 9:30
 
-#3 The Medicaid website will display to applicants the top 3 plans that match their inputted information. 
+#8 The Medicaid website will display to applicants the top 3 plans that match their inputted information. 
 # This is based on reported monthly income, age, sex, and if the individual is pregnant. These top 3 are 
 # from the most frequently used by existing Medicaid recipients. 
 
@@ -596,12 +627,6 @@ SET @age := 35,
 	@sex := 'F',
 	@pregnancy_indicator := 'Y',
 	@income := 2000;
-    
-# Another Test User - Child Male (If needed)
-#SET @age := 17,
-#	@sex := 'M',
-#	@pregnancy_indicator := 'N',
-#	@income := 1000;
     
 # Joins two tables together and matches user with 3 most popular plans that fit his or her demographics. 
 SELECT r.Plan_ID, r.Plan_Description, COUNT(i.Plan_ID) AS frequency 
