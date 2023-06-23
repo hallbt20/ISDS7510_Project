@@ -310,8 +310,23 @@ INSERT INTO medicaid_summary VALUES
 	(2197,	"LA205",	4582037,	'2020-06-15',	'2022-12-01',	'pending',	'Closed');
     
 #### Adding Values into Correspondence ####
-
-### Placeholder ###
+Insert Into correspondence Values 
+	(1000, 4580567, "LA120", 'Francine', 'Smith', '2022-06-15 11:23:00', 'renewal', 'Y'),
+	(1001, 4580967,	"LA125", 'Siobhan',	'Roy', '2022-07-02 14:05:00', 'accepted', 'Y'),
+	(1002, 4582037,	"LA150", 'Diane', 'Simmons', '2022-08-19 09:37:00', 'denied', 'Y'),
+	(1003, 4582273,	"LA120", 'Steven', 'Smith',	'2022-09-07 16:18:00', 'renewal', 'Y'),
+	(1004, 4583421,	"LA150", 'Bonnie', 'Swanson', '2022-10-14 10:49:00', 'accepted', 'Y'),
+	(1005, 4583743,	"LA120", 'Thomas', 'Tucker', '2022-11-25 12:56:00', 'renewal', 'Y'),
+	(1006, 4583979,	"LA100", 'Meg', 'Griffin', '2022-12-10 15:27:00', 'denied', 'Y'),
+	(1007, 4585449,	"LA120", 'Carter', 'Pewterschmidt', '2023-01-03 08:32:00', 'accepted', 'Y'),
+	(1008, 4585685,	"LA100", 'Terry', 'Bates', '2023-02-11 13:40:00', 'renewal', 'Y'),
+	(1009, 4586919,	"LA225", 'Glenn', 'Quagmire', '2023-03-21 10:12:00', 'denied', 'Y'),
+	(1010, 4587091,	"LA120", 'Joe', 'Swanson', '2023-04-05 09:02:00', 'renewal', 'Y'),
+	(1011, 4587155, "LA120", 'Barbara', 'Pewterschmidt', '2023-05-12 14:41:00', 'accepted', 'Y'),
+	(1012, 4587391,	"LA150", 'Greg', 'Corbin', '2023-06-01 08:54:00', 'denied', 'N'),
+	(1013, 4588625,	"LA150", 'Cleveland', 'Brown', '2023-07-17 12:28:00', 'renewal', 'N'),
+	(1014, 4588861,	"LA120", 'Stan', 'Smith', '2023-08-02 16:07:00', 'accepted', 'N'),
+	(1015, 4589097,	"LA100", 'Hailey', 'Smith', '2023-09-09 11:19:00', 'renewal', 'N');
 
 ################## Queries ##################
 
