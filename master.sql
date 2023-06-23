@@ -10,8 +10,10 @@ DROP TABLE IF EXISTS
     individual, 
     income, 
     medicaid_summary, 
-    correspondence;
-
+    correspondence, 
+    eligibility_determination,
+    correspondence_trigger;
+    
 ################## Create Tables ##################
 
 #### Create Account Table ####
@@ -99,6 +101,27 @@ CREATE TABLE correspondence (
 	PRIMARY KEY (Document_Num),
 	CONSTRAINT fk_correspondence_individual_ID FOREIGN KEY (Individual_ID) REFERENCES individual(Individual_ID),
 	CONSTRAINT fk_correspondence_plan_ID FOREIGN KEY (Plan_ID) REFERENCES medicaid_summary (Plan_ID)
+);
+
+CREATE TABLE eligibility_determination (
+	Individual_ID INT (11),
+	Start_Time TIME,
+	End_Time TIME,
+	Interface_Monitor VARCHAR(50),
+	Medicaid_Summary_Num INT(10),
+	PRIMARY KEY (Medicaid_Summary_Num),
+	CONSTRAINT fk_eligibility_determination_individual_ID foreign key (Individual_ID) REFERENCES individual(Individual_ID),
+	CONSTRAINT fk_eligibility_determination_medicaid_summary_num foreign key (Medicaid_Summary_Num) REFERENCES medicaid_summary(Medicaid_Summary_Num)
+);
+
+CREATE TABLE correspondence_trigger (
+	Document_Num INT (10),
+	Start_Time TIME,
+	End_Time TIME,
+	Medicaid_Summary_Num INT(10),
+	PRIMARY KEY (Document_Num),
+	CONSTRAINT fk_correspondence_trigger_document_num foreign key (Document_Num) REFERENCES correspondence(Document_Num),
+	CONSTRAINT fk_correspondence_trigger_medicaid_summary_num foreign key (Medicaid_Summary_Num) REFERENCES medicaid_summary(Medicaid_Summary_Num)
 );
 
 ################## Add Values to Tables ##################
@@ -328,11 +351,111 @@ Insert Into correspondence Values
 	(1014, 4588861,	"LA120", 'Stan', 'Smith', '2023-08-02 16:07:00', 'accepted', 'N'),
 	(1015, 4589097,	"LA100", 'Hailey', 'Smith', '2023-09-09 11:19:00', 'renewal', 'N');
 
+INSERT INTO eligibility_determination VALUES 
+	(4580967,'8:00',	'8:15',	'Olivia',	2134),
+	(4582234,'8:15',	'8:30',	'Aaliyah',	2135),
+	(4581235,'8:30',	'8:45',	'Adeline',	2136),
+	(4580009,'9:00',	'9:15',	'Aisha',	2137),
+	(4587091,'9:15',	'9:30',	'Emma',	2138),
+	(4583421,'9:30',	'9:45',	'Charlotte',	2139),
+	(4586919,'9:45',	'10:00',	'Amelia',	2140),
+	(4588625,'10:00',	'10:15',	'Sophia',	2141),
+	(4580331,'10:15',	'10:30',	'Isabella',	2142),
+	(4582037,'10:30',	'10:45',	'Ava',	2143),
+	(4583743,'10:45',	'11:00',	'Mia',	2144),
+	(4585449,'11:00',	'11:15',	'Evelyn',	2145),
+	(4587155,'11:15',	'11:30',	'Lillian',	2146),
+	(4588861,'11:30',	'12:00',	'Luna',	2147),
+	(4580567,'8:00',	'8:15',	'Olivia',	2148),
+	(4582273,'8:15',	'8:30',	'Aaliyah',	2149),
+	(4583979,'8:30',	'8:45', 'Adeline',	2150),
+	(4585685,'9:00',	'9:15',	'Aisha',	2151),
+	(4587391,'9:15',	'9:30',	'Emma',	2152),
+	(4589097,'9:30',	'9:45',	'Charlotte',	2153),
+	(4580967,'9:45',	'10:00',	'Amelia',	2154),
+	(4582234,'10:00',	'10:15',	'Sophia',	2155),
+	(4581235,'10:15',	'10:30',	'Isabella',	2156),
+	(4580009,'10:30',	'10:45',	'Ava',	2157),
+	(4587091,'10:45',	'11:00',	'Mia',	2158),
+	(4583421,'11:00',	'11:15',	'Evelyn',	2159),
+	(4586919,'11:15',	'11:30',	'Lillian',	2160),
+	(4588625,'11:30',	'12:00',	'Luna',	2161),
+	(4580331,'8:00',	'8:15',	'Olivia',	2162),
+	(4582037,'8:15',	'8:30',	'Aaliyah',	2163),
+	(4583743,'8:30',	'8:45',	'Adeline',	2164),
+	(4585449,'9:00',	'9:15',	'Aisha',	2165),
+	(4587155,'9:15',	'9:30',	'Emma',	2166),
+	(4580967,'9:30',	'9:45',	'Charlotte',	2167),
+	(4582234,'9:45',	'10:00',	'Amelia',	2168),
+	(4581235,'10:00',	'10:15',	'Sophia',	2169),
+	(4580009,'10:15',	'10:30',	'Isabella',	2170),
+	(4587091,'10:30',	'10:45',	'Ava',	2171),
+	(4580967,'10:45',	'11:00',	'Mia',	2172),
+	(4582234,'11:00',	'11:15',	'Evelyn',	2173),
+	(4581235,'11:15',	'11:30',	'Lillian',	2174),
+	(4580009,'11:30',	'12:00',	'Luna',	2175),
+	(4587091,'8:00',	'8:15',	'Olivia',	2176),
+	(4580967,'8:15',	'8:30','Aaliyah',	2177),
+	(4582234,'8:30',	'8:45',	'Adeline',	2178),
+	(4581235,'9:00',	'9:15',	'Aisha',	2179),
+	(4580009,'9:15',	'9:30',	'Emma',	2180),
+	(4587091,'9:30',	'9:45',	'Charlotte',	2181),
+	(4586919,'9:45',	'10:00',	'Amelia',	2182),
+	(4588625,'10:00',	'10:15',	'Sophia',	2183),
+	(4580331,'10:15',	'10:30',	'Isabella',	2184),
+	(4582037,'10:30',	'10:45',	'Ava',	2185),
+	(4583743,'10:45',	'11:00',	'Mia',	2186),
+	(4585449,'11:00',	'11:15',	'Evelyn',	2187),
+	(4586919,'11:15',	'11:30',	'Lillian',	2188),
+	(4588625,'11:30',	'12:00',	'Luna',	2189),
+	(4580331,'8:00',	'8:15',	'Olivia',	2190),
+	(4582037,'8:15',	'8:30',	'Aaliyah',	2191),
+	(4583743,'8:30',	'8:45',	'Adeline',	2192),
+	(4585449,'9:00',	'9:15',	'Aisha',	2193),
+	(4586919,'9:15',	'9:30',	'Emma',	2194),
+	(4588625,'9:30',	'9:45',	'Charlotte',	2195),
+	(4580331,'9:45',	'10:00',	'Amelia',	2196),
+	(4582037,'10:00',	'10:15',	'Sophia',	2197);
+    
+INSERT INTO correspondence_trigger VALUES
+	(1000,	'12:00',	'12:15',	2148),
+	(1001,	'12:15',	'12:30',	2134),
+	(1002,	'12:30',	'12:45'	,2197),
+	(1003,	'12:45',	'1:00'	,2149),
+	(1004,	'1:00',	'1:15'	,2139),
+	(1005,	'1:15',	'1:30'	,2192),
+	(1006,	'1:30',	'1:45'	,2150),
+	(1007,	'1:45',	'2:00'	,2145),
+	(1008,	'12:00',	'12:15',	2151),
+	(1009,	'12:15',	'12:30'	,2140),
+	(1010,	'12:30',	'12:45'	,2181),
+	(1011,	'12:45',	'1:00'	,2146),
+	(1012,	'1:00',	'1:15'	,2152),
+	(1013,	'1:15',	'1:30'	,2141),
+	(1014,	'1:30',	'1:45'	,2147),
+	(1015,	'1:45',	'2:00'	,2153);
+
 ################## Queries ##################
 
-#### Query 1 ####
-# Anytime that there is an update to contact information, account notes need to be 
+#1 The print shop is to issue out correspondence letters. Since the information is sensitive, a view needs to be created
+#that only shows the individuals first and last name and their addresses. 
+#The print shop needs to get the first initial and the last name of the individuals.
+
+DROP VIEW IF EXISTS PSS;
+CREATE VIEW PSS AS
+SELECT  i.First_Name, i.last_name, Addr_1, addr_2, Addr_State, Addr_City, Addr_Zip
+FROM correspondence c
+INNER JOIN individual i
+ON c.Individual_ID = i.individual_id
+INNER JOIN  account a
+ON i.Account_Num = a.Account_Num
+WHERE Correspondence_Status = 'N';
+
+SELECT SUBSTR(First_Name, 1, 1) As NewColumn, last_name FROM team2_database.PSS;
+
+# 2) Anytime that there is an update to contact information, account notes need to be 
 # inserted into the account table and changes need to be logged separately. 
+
 DROP TRIGGER IF EXISTS update_individual;
 DROP TRIGGER IF EXISTS update_individual_address;
 DROP TABLE IF EXISTS update_individual_log;
@@ -419,41 +542,52 @@ SET Addr_1 = '123 Main Street',
     Addr_Zip = '70123'
 WHERE Account_Num = 938000328;
 
-#### Query 2 ####
-# Medicaid is interesting in exploring the demographics of Medicaid applicants. They want to explore 
-# statistics regarding average age, age distribution, frequency of pregnant individuals.  
+#3 How many cases need to be updated for this month? Accounts that have been active for a year in approved and ongoing modes need to be renewed.
+#A distinct count of the individuals IDs are needed.
 
-# Create a frequency distribution of female recipients who are/are not pregnant. 
-SELECT Pregnancy_Indicator, COUNT(Pregnancy_Indicator) AS FREQUENCY FROM individual WHERE Sex = 'F' GROUP BY Pregnancy_Indicator; 
+select count(distinct i.Individual_ID) AS Renewal_Count, timestampdiff(month, Plan_Start_Date, Plan_End_Date) AS Plan_Duration, i.Individual_ID, i.Relationship
+from medicaid_summary m
+INNER JOIN individual i
+ON m.Individual_ID = i.individual_id
+INNER JOIN  account a
+ON i.Account_Num = a.Account_Num
+where Approval_Status = 'approved' and Assistance_Status = 'ongoing'
+and ((select timestampdiff(month, Plan_Start_Date, Plan_End_Date)) >= 12)
+group by i.Individual_ID having Relationship = 'Parent'
+order by plan_duration desc;
 
-# Determine the average age of recipients based on dob. 
-SELECT AVG(DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0) AS avg_age FROM individual;
+#4 Child plans are based on age, during renewals some individuals will no longer qualify 
+#for the plan if they are 18 and older. Get the account numbers and individual IDs of the children 
+#that are rolling out of the plan and will be placed into ACA benefits using their birthday and the current date.
 
-# Create a grouped frequency distribution of number of recipients in different age brackets. 
-SELECT
-    CASE
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 19 THEN 'Under 19'
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 19 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 26 THEN 'Between 19 and 25'
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 26 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 36 THEN 'Between 26 and 35'
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 36 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 51 THEN 'Between 36 and 50'
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 51 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 66 THEN 'Between 51 and 65'
-        ELSE '65 and older'
-    END AS age_group,
-    COUNT(*) AS frequency
-FROM
-    individual
-GROUP BY
-    CASE
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 19 THEN 'Under 19'
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 19 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 26 THEN 'Between 19 and 25'
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 26 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 36 THEN 'Between 26 and 35'
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 36 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 51 THEN 'Between 36 and 50'
-        WHEN DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 >= 51 AND DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 < 66 THEN 'Between 51 and 65'
-        ELSE '65 and older'
-    END;
-    
-#### Query 3 ####
-# The Medicaid website will display to applicants the top 3 plans that match their inputted information. 
+SELECT Individual_ID, Account_Num,  DATE_FORMAT(FROM_DAYS(DATEDIFF(NOW(),DOB)), '%Y') + 0 AS AGE FROM INDIVIDUAL 
+where Plan_ID in ('LA135', 'LA120') #Individual that has the 
+order by AGE desc;
+
+#5 Average income for people that have Parent/Caretaker Relativr (LA150) TOA will be used to update the reference table income limits. Group by sex
+
+SELECT AVG(Monthly_Income_Amount) AS AMI, sex FROM income i 
+inner join individual id
+on i.Individual_ID = id.Individual_ID
+where plan_id = 'LA150'
+GROUP BY SEX;
+
+#6 Find the total cost of correspondence for individuals that have indicated they are not US citizens.
+#These pieces of correspondence include extra packages of information and cost more at the print shop.
+#What is the total cost of the denial letters sent this year (10.00/Denial Letter)
+
+select count(distinct Document_Num) AS DENIAL_COUNT,
+count(distinct Document_Num)* 10.00 AS TOTAL_DENIAL_COST from correspondence c
+inner join individual i on
+c.individual_id = i.Individual_ID
+where i.Citizenship_Status = 'N';
+
+#7 Who triggered eligibility before immediately before 9:30 and immediately after?
+
+select distinct Interface_Monitor from eligibility_determination where End_Time like '%9:30%'; #Before 9:30
+select distinct Interface_Monitor from eligibility_determination where Start_Time like '%9:30%';#After 9:30
+
+#3 The Medicaid website will display to applicants the top 3 plans that match their inputted information. 
 # This is based on reported monthly income, age, sex, and if the individual is pregnant. These top 3 are 
 # from the most frequently used by existing Medicaid recipients. 
 
@@ -480,5 +614,30 @@ AND @pregnancy_indicator = IFNULL(r.Pregnancy_Indicator, @pregnancy_indicator)
 AND @income <= IFNULL(r.Maximum_Income, @income)
 GROUP BY r.Plan_ID
 ORDER BY frequency DESC
-LIMIT 3
-;
+LIMIT 3;
+
+#9 For pregnant individuals, after a nine month period benefits need to be closed and pregnancy indicator updated.
+#Create query to find individuals that have ongoing benefits beyond the nine months before making the necessary updates.
+
+select m.Individual_ID, timestampdiff(month, Plan_Start_Date, Plan_End_Date) AS Plan_Duration, 
+i.pregnancy_indicator, assistance_status, Approval_Status 
+from medicaid_summary m
+inner join individual i
+on m.Individual_ID = i.Individual_ID
+inner join account a
+on i.account_num = a.account_num
+where m.Plan_ID = 'LA125'
+and ((select timestampdiff(month, Plan_Start_Date, Plan_End_Date))>9);
+
+#10 This is a query to help the analyst test cases to ensure that the system is functioning as intended. 
+#This query pulls individuals that have ongoing benefits  for a specified TOA
+
+select rt.Plan_Description, m.plan_id, Individual_ID from 
+rt_medicaid_plan rt inner join medicaid_summary m
+on rt.Plan_ID = m.plan_id
+#ensure type of assistance is current and active
+where Approval_Status = 'approved'
+and Assistance_Status = 'ongoing'
+#update the type of assistance as needed
+and m.Plan_ID = 'LA120' 
+order by m.Individual_ID;
